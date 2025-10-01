@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NODE_ENV=development
+    command: npm run dev
+    
+ backend:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+      - /app/dist
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=development
+    command: npm run start:dev
+
+# Uncomment if you need additional services like database
+# services:
+#   nextjs-app:
+#     # ... (app configuration above)
+#     depends_on:
+#       - postgres
+#   
+#   postgres:
+#     image: postgres:15-alpine
+#     environment:
+#       POSTGRES_DB: myapp
+#       POSTGRES_USER: user
+#       POSTGRES_PASSWORD: password
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
+#
+# volumes:
+#   postgres_data:

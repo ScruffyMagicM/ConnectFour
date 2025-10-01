@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:3001
+      - NODE_ENV=production
+      # Add your environment variables here
+      # - DATABASE_URL=your_database_url
+      # - NEXT_PUBLIC_API_URL=your_api_url
+    # Uncomment and modify if you need volumes
+    # volumes:
+    #   - ./data:/app/data
+    depends_on:
+	- api
+    networks:
+	- app-network
+    restart: unless-stopped
+    
+    # Optional: Add health check
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+ backend:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+# Uncomment if you need additional services like database
+# services:
+#   nextjs-app:
+#     # ... (app configuration above)
+#     depends_on:
+#       - postgres
+#   
+#   postgres:
+#     image: postgres:15-alpine
+#     environment:
+#       POSTGRES_DB: myapp
+#       POSTGRES_USER: user
+#       POSTGRES_PASSWORD: password
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
+#
+# volumes:
+#   postgres_data:
