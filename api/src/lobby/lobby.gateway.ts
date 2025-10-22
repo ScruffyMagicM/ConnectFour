@@ -51,7 +51,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('playerQuit')
   handlePlayerQuit(@MessageBody() gameId: number, playerId: number, @ConnectedSocket() client: Socket): PlayerJoinedDTO {
-    console.log(`Player quit: ${playerId} from game: ${gameId}`);
+    console.log(`Player quit from game: ${gameId}`);
     return { playerId, gameId };
   }
 

@@ -15,17 +15,19 @@ export class LobbyService {
         return games.map(game => ({
             id: game.id,
             name: game.name,
+            players: game.players.length,
         }));
     }
 
-    async createGame(playerId: number, gameName: string, startColor: number): Promise<Game> {
+    async createGame(gameName: string): Promise<GameIndexDTO> {
         const newGame = this.gameRepository.create({
             name: gameName,
             board: Array(42).fill(0),
-            turn: startColor,
-            players: [playerId],
+            turn: 1,
+            players: [],
         });
-        return await this.gameRepository.save(newGame);
+        await this.gameRepository.save(newGame);
+        return { id: newGame.id, name: newGame.name};
     }
 
     async joinGame(playerId: number, gameId: number): Promise<GameDetailsDTO> {
