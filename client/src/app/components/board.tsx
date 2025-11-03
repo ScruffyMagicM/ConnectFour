@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { gameApiService } from "../services/gameAPIService";
 import Confetti from "canvas-confetti";
 import { useGameSocket } from "../hooks/useGameSocket";
 import { Socket } from "socket.io-client";
-import { GameStateDTO } from "../types/game.types";
 import { useAppState } from "../hooks/useAppState";
 
 export default function Board({ setMessage, leaveGame, socket }: { gameId: number | null; playerId: number | null; setMessage: (message: string) => void; leaveGame: (gameId: number | null, playerId: number | null) => void; socket: Socket | null; }) {
 
     const {
-            board,
-            setBoard,
             currentPlayer,
             roomId,
         } = useAppState();
@@ -29,23 +26,58 @@ export default function Board({ setMessage, leaveGame, socket }: { gameId: numbe
     },
     onGameStateUpdate: (data) => {
       setBoard(data.game.board);
+      setRowTop(findRowTop(data.game.board));
       if(data.game.turn > 2){
         endGame(data.game.turn);
       }
     }
   });
 
-  playerJoinedGame(currPlayerId);
-
     //Update to use existing game state
-    const [rowTop, setRowTop] = useState(Array(7).fill(5));
+    const [board, setBoard] = useState<number[]>(Array(42));
+    const [rowTop, setRowTop] = useState(Array(7));
     const [turn, setTurn] = useState(1);
     const [confettiVisible, setConfettiVisible] = useState(false);
-
-    for(let k = 0; k < 7; k++) {
-        rowTop.push(5);
-    }
     
+    useEffect(() => {    
+      playerJoinedGame(currPlayerId);
+
+      //Make API call for board state
+      gameApiService.getGame(currGameId).then(response => {
+        setBoard(response.data.board);
+        setTurn(response.data.turn);
+        setRowTop(findRowTop(response.data.board));
+      });
+    }, [currGameId, currPlayerId, playerJoinedGame]);
+
+    function findRowTop(board: number[]): number[] {
+        const tops: number[] = [];
+        for (let col = 0; col < 7; col++) {
+            let top = 5; // Start from the bottom row
+            while (top >= 0 && board[col + (top * 7)] !== 0) {
+                top--;
+            }
+            tops[col] = top;
+        }
+        return tops;
+    }
+
+    function findSingleRowTop(board: number[], column: number): number {
+        let top = 5; // Start from the bottom row
+        while (top >= 0 && board[column + (top * 7)] !== 0) {
+            top--;
+        }
+        return top;
+    }
+
+    function quitGame(){
+      gameApiService.quitGame(currGameId, currPlayerId).then(() => {
+        setMessage(`You quit the game.`);
+        playerQuitGame(currPlayerId); 
+        leaveGame(currGameId, currPlayerId);
+      });
+    }
+
     function handleSquareClick(column: number) {
         if(turn !== currPlayerId) return; // not this player's turn
 
@@ -60,6 +92,8 @@ export default function Board({ setMessage, leaveGame, socket }: { gameId: numbe
             const newSquares = board.slice();
             newSquares[id] = turn;
             setBoard(newSquares);
+            rowTop[column] = findSingleRowTop(newSquares, column);
+            setRowTop(rowTop);
             updateGameState({ board: board, lastMove: id, turn: response.data });
             if(response.data > 2){
                 endGame(currPlayerId);
@@ -77,6 +111,8 @@ export default function Board({ setMessage, leaveGame, socket }: { gameId: numbe
         }, 300);
 
         // Show exit option
+        prompt("Game over! Press OK to exit to lobby.");
+        quitGame();
     }
 
     return (
@@ -139,7 +175,7 @@ export default function Board({ setMessage, leaveGame, socket }: { gameId: numbe
       </div>
     </div>
     <div>{confettiVisible && <Confetti />}</div>
-    <div><button className="quit-button" onClick={() => { playerQuitGame(currPlayerId); leaveGame(currGameId, currPlayerId); }}>Quit Game</button></div>
+    <div><button className="quit-button" onClick={() => quitGame()}>Quit Game</button></div>
     </div>
     );
 }

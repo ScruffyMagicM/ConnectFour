@@ -16,7 +16,7 @@ services:
       - NODE_ENV=development
     command: npm run dev
     
- backend:
+  backend:
     build:
       context: ./api
       dockerfile: Dockerfile.dev

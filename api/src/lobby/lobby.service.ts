@@ -25,6 +25,7 @@ export class LobbyService {
             board: Array(42).fill(0),
             turn: 1,
             players: [],
+            completed: false,
         });
         await this.gameRepository.save(newGame);
         return { id: newGame.id, name: newGame.name};

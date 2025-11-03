@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import type { GameIndexDTO } from "../types/game.types";
 import { lobbyApiService } from "../services/lobbyAPIService";
 import { useLobbySocket } from "../hooks/useLobbySocket";
 import { Socket } from "socket.io-client";
 import { useAppState } from "../hooks/useAppState";
-
-const games: GameIndexDTO[] = [];
 
 export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (gameId: number | null, playerId: number | null) => void, setMessage: (message: string) => void, socket: Socket | null }) {
     const {
@@ -18,6 +16,9 @@ export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (g
         justQuitGame,
         setJustQuitGame,
     } = useAppState();
+
+    const [games, setGames] = useState<GameIndexDTO[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Lobby-specific socket events and actions
     const { createGame, joinGame, quitGame } = useLobbySocket(socket, {
@@ -44,11 +45,6 @@ export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (g
     }, [setMessage]),
   });
 
-  if(justQuitGame === true){
-    quitGame(roomId!, currentPlayer!);
-    setJustQuitGame(false);
-  }
-
   const clickJoinGame = () => (gameId: number) => {
     const game = games.find(game => game.id === gameId);
     if(game === undefined || game.players > 1) return;
@@ -66,6 +62,11 @@ export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (g
   const makeGame = () => {
     //Open prompt to create game
     const gameName = prompt("Enter a name for your game:");
+
+    if(!gameName && gameName !== ""){
+        return;
+    }
+
     const tempName = `Game_${Math.floor(Math.random() * 1000)}`;
 
     lobbyApiService.createGame(gameName ? gameName : tempName).then(response => {
@@ -73,35 +74,49 @@ export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (g
             setMessage(`Game "${gameName ? gameName : tempName}" created!`);
             createGame(gameName ? gameName : tempName);
             games.push(response.data);
+            setGames(games);
         }
     });
   };
 
+  useEffect(() => {
+    if(justQuitGame === true){
+      quitGame(roomId!, currentPlayer!);
+      setJustQuitGame(false);
+    }
+  }, [justQuitGame]);
+
+  useEffect(() => {  
+    console.log("Fetching games list from lobby...");
     lobbyApiService.getGames().then(response => {
+        console.log("Got lobby...");
+        const newGames: GameIndexDTO[] = [];
         if(response.data){
             response.data.forEach(game => {
-                games.push(game);
+                newGames.push(game);
             });
         }
+        setGames(newGames);
+        setIsLoading(false);
     });
+  }, []);
 
     return (
         <div className="lobby">
-            <h1>Welcome to Connect Four!</h1>
-            <button className="lobby-button">Create Game</button>
-            <ul className="game-list">
-                <GamesList joinGame={clickJoinGame} />
-            </ul>
-
+            { !isLoading && 
+              <ul className="game-list">
+                <GamesList games={ games } joinGame={clickJoinGame} />
+              </ul>
+            }
             <button className="lobby-button" onClick={() => makeGame()}>Create Game</button>
         </div>
     );
 }
 
-export function GamesList({ joinGame }: { joinGame: (gameId: number) => void }) {
+export function GamesList({ games, joinGame }: { games: GameIndexDTO[], joinGame: (gameId: number) => void }) {
     const gameItems = games.map(game =>
     <li className="game-item" key={game.id}>
-        {game.name} - {game.players}/2 <button className="join-button" onClick={() => joinGame(game.id)}>Join</button>
+        {game.name} - {game.players ?? 0}/2 <button className="join-button" onClick={() => joinGame(game.id)}>Join</button>
     </li>
   );
 

@@ -35,7 +35,7 @@ export default function ConnectFour() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-8">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl w-full">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           Connect Four Multiplayer

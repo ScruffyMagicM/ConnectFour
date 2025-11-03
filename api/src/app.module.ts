@@ -3,6 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Game } from './interfaces/game.class';
+import { GameModule } from './game/game.module';
+import { LobbyModule } from './lobby/lobby.module';
+import { LobbyController } from './lobby/lobby.controller';
+import { GameController } from './game/game.controller';
 
 @Module({
   imports: [
@@ -15,9 +19,11 @@ import { Game } from './interfaces/game.class';
       database: 'ConnectFour',
       entities: [Game],
       synchronize: true
-    })
+    }),
+    GameModule,
+    LobbyModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

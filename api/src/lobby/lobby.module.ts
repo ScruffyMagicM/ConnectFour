@@ -9,5 +9,6 @@ import { Game } from '../interfaces/game.class';
   imports: [TypeOrmModule.forFeature([Game])],
   controllers: [LobbyController],
   providers: [LobbyService, LobbyGateway],
+  exports: [LobbyService],
 })
 export class LobbyModule {}

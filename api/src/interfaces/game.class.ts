@@ -17,7 +17,7 @@ export class Game {
   @Column()
   completed: boolean;
 
-  players: number[];
+  players: number[] = [];
 }
 
 export interface GameDetailsDTO {
