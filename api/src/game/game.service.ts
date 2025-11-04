@@ -22,6 +22,7 @@ export class GameService {
 
     // We assume player joining takes first available player slot, i.e. first player to join will be player 1;
     game.players.push(game.players.length + 1);
+    this.gameRepository.update(game.id, {players: game.players});
 
     this.gameGateway.broadcastPlayerJoined(game.players.length);
     return await this.GetGameState(game);

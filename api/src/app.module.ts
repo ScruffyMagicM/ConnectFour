@@ -14,7 +14,7 @@ import { GameController } from './game/game.controller';
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'postgres',
+      username: 'scruffymagic',
       password: 'Stuyvesant1',
       database: 'ConnectFour',
       entities: [Game],

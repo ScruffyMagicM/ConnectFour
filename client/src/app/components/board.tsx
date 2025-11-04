@@ -7,15 +7,10 @@ import { useGameSocket } from "../hooks/useGameSocket";
 import { Socket } from "socket.io-client";
 import { useAppState } from "../hooks/useAppState";
 
-export default function Board({ setMessage, leaveGame, socket }: { gameId: number | null; playerId: number | null; setMessage: (message: string) => void; leaveGame: (gameId: number | null, playerId: number | null) => void; socket: Socket | null; }) {
+export default function Board({ gameId, playerId, setMessage, leaveGame, socket }: { gameId: number | null; playerId: number | null; setMessage: (message: string) => void; leaveGame: (gameId: number | null, playerId: number | null) => void; socket: Socket | null; }) {
 
-    const {
-            currentPlayer,
-            roomId,
-        } = useAppState();
-
-    const currGameId = roomId!;
-    const currPlayerId = currentPlayer!;
+    const currGameId = gameId!;
+    const currPlayerId = playerId!;
 
     const { playerJoinedGame, playerQuitGame, updateGameState } = useGameSocket(socket, {
     onPlayerJoinedGame(data) {
@@ -48,7 +43,7 @@ export default function Board({ setMessage, leaveGame, socket }: { gameId: numbe
         setTurn(response.data.turn);
         setRowTop(findRowTop(response.data.board));
       });
-    }, [currGameId, currPlayerId, playerJoinedGame]);
+    }, []);
 
     function findRowTop(board: number[]): number[] {
         const tops: number[] = [];
@@ -175,7 +170,7 @@ export default function Board({ setMessage, leaveGame, socket }: { gameId: numbe
       </div>
     </div>
     <div>{confettiVisible && <Confetti />}</div>
-    <div><button className="quit-button" onClick={() => quitGame()}>Quit Game</button></div>
+    <div><button className="quit-button px-3 py-1 border rounded bg-blue-500 text-white hover:bg-blue-600" onClick={() => quitGame()}>Quit Game</button></div>
     </div>
     );
 }

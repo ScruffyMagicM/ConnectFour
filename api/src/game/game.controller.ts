@@ -5,6 +5,7 @@ import { Param } from '@nestjs/common';
 import type { GameStateDTO } from 'src/interfaces/game.class';
 import { ApiResponse } from 'src/interfaces/api.interface';
 import * as ApiUtils from 'src/utils/api.utils';
+import { QuitGameDTO } from 'src/interfaces/dtos.class';
 
 @Controller('game')
 export class GameController {
@@ -21,7 +22,7 @@ export class GameController {
   }
 
   @Post('quitGame')
-  async QuitGame(@MessageBody() gameId: number, playerId: number): Promise<ApiResponse<void>> {
-    return ApiUtils.createApiResponse(this.gameService.QuitGame(gameId, playerId), 'Quit game successfully');
+  async QuitGame(@MessageBody() quitGameDTO: QuitGameDTO): Promise<ApiResponse<void>> {
+    return ApiUtils.createApiResponse(this.gameService.QuitGame(quitGameDTO.gameId, quitGameDTO.playerId), 'Quit game successfully');
   }
 }
