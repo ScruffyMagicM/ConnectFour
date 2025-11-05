@@ -19,8 +19,6 @@ export default function ConnectFour() {
     setJustQuitGame
   } = useAppState();
 
-  const { socket, isConnected } = useSocketConnection();
-
   const joinGame = (gameId: number | null, playerId: number | null) => {
     // Switch from Lobby to Board
     setGameStatus('playing');
@@ -46,11 +44,11 @@ export default function ConnectFour() {
         </h2>
 
         {gameStatus === 'lobby' && (
-          <Lobby enterGame={joinGame} setMessage={setMessage} socket={socket} />
+          <Lobby enterGame={joinGame} setMessage={setMessage}/>
         )}
 
         {(gameStatus === 'playing') && (
-          <Board gameId={roomId} playerId={currentPlayer} setMessage={setMessage} leaveGame={quitGame} socket={socket} />
+          <Board gameId={roomId} playerId={currentPlayer} setMessage={setMessage} leaveGame={quitGame} />
         )}
 
       </div>

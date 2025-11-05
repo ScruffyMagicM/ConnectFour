@@ -6,8 +6,9 @@ import { lobbyApiService } from "../services/lobbyAPIService";
 import { useLobbySocket } from "../hooks/useLobbySocket";
 import { Socket } from "socket.io-client";
 import { useAppState } from "../hooks/useAppState";
+import { useSocketConnection } from "../hooks/useSocketConnection";
 
-export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (gameId: number | null, playerId: number | null) => void, setMessage: (message: string) => void, socket: Socket | null }) {
+export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: number | null, playerId: number | null) => void, setMessage: (message: string) => void }) {
     const {
         roomId,
         setRoomId,
@@ -19,6 +20,7 @@ export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (g
 
     const [games, setGames] = useState<GameIndexDTO[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { socket, isConnected } = useSocketConnection();
 
   // Lobby-specific socket events and actions
     const { createGame, joinGame, quitGame } = useLobbySocket(socket, {
@@ -54,6 +56,7 @@ export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (g
             setCurrentPlayer(game.players + 1);
             setRoomId(gameId);
             joinGame(gameId, game.players + 1);
+            socket?.disconnect();
             enterGame(gameId, game.players + 1);
         }
     });
@@ -98,7 +101,7 @@ export default function Lobby({ enterGame, setMessage, socket }: { enterGame: (g
         }
         setGames(newGames);
         setIsLoading(false);
-        
+        socket?.connect();
     });
   }, []);
 

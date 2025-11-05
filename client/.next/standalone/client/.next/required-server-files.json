@@ -99,7 +99,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "C:\\VSProjects\\ConnectFour\\ConnectFour",
+    "outputFileTracingRoot": "F:\\DevelopmentProjects\\ConnectFour",
     "experimental": {
       "useSkewCookie": false,
       "cacheLife": {
@@ -289,10 +289,10 @@
     "configFileName": "next.config.ts",
     "swcMinify": true,
     "turbopack": {
-      "root": "C:\\VSProjects\\ConnectFour\\ConnectFour"
+      "root": "F:\\DevelopmentProjects\\ConnectFour"
     }
   },
-  "appDir": "C:\\VSProjects\\ConnectFour\\ConnectFour\\client",
+  "appDir": "F:\\DevelopmentProjects\\ConnectFour\\client",
   "relativeAppDir": "client",
   "files": [
     ".next\\routes-manifest.json",

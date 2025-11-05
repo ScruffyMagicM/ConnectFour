@@ -238,7 +238,7 @@ function _define_property(obj, key, value) {
 "[project]/client/node_modules/canvas-confetti/dist/confetti.module.mjs [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// canvas-confetti v1.9.4 built on 2025-10-25T05:14:56.640Z
+// canvas-confetti v1.9.3 built on 2024-04-30T22:19:17.794Z
 __turbopack_context__.s([
     "create",
     ()=>create,
@@ -255,11 +255,11 @@ var module = {};
         if (!global.OffscreenCanvas) {
             return false;
         }
+        var canvas = new OffscreenCanvas(1, 1);
+        var ctx = canvas.getContext('2d');
+        ctx.fillRect(0, 0, 1, 1);
+        var bitmap = canvas.transferToImageBitmap();
         try {
-            var canvas = new OffscreenCanvas(1, 1);
-            var ctx = canvas.getContext('2d');
-            ctx.fillRect(0, 0, 1, 1);
-            var bitmap = canvas.transferToImageBitmap();
             ctx.createPattern(bitmap, 'no-repeat');
         } catch (e) {
             return false;
@@ -430,7 +430,7 @@ var module = {};
                     ])));
                 } catch (e) {
                     // eslint-disable-next-line no-console
-                    typeof console !== 'undefined' && typeof console.warn === 'function' ? console.warn('🎊 Could not load worker', e) : null;
+                    typeof console !== undefined && typeof console.warn === 'function' ? console.warn('🎊 Could not load worker', e) : null;
                     return null;
                 }
                 decorate(worker);

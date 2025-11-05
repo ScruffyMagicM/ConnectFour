@@ -6,11 +6,13 @@ import Confetti from "canvas-confetti";
 import { useGameSocket } from "../hooks/useGameSocket";
 import { Socket } from "socket.io-client";
 import { useAppState } from "../hooks/useAppState";
+import { useSocketConnection } from "../hooks/useSocketConnection";
 
-export default function Board({ gameId, playerId, setMessage, leaveGame, socket }: { gameId: number | null; playerId: number | null; setMessage: (message: string) => void; leaveGame: (gameId: number | null, playerId: number | null) => void; socket: Socket | null; }) {
+export default function Board({ gameId, playerId, setMessage, leaveGame }: { gameId: number | null; playerId: number | null; setMessage: (message: string) => void; leaveGame: (gameId: number | null, playerId: number | null) => void; }) {
 
     const currGameId = gameId!;
     const currPlayerId = playerId!;
+    const { socket, isConnected } = useSocketConnection();
 
     const { playerJoinedGame, playerQuitGame, updateGameState } = useGameSocket(socket, {
     onPlayerJoinedGame(data) {
@@ -34,7 +36,8 @@ export default function Board({ gameId, playerId, setMessage, leaveGame, socket 
     const [turn, setTurn] = useState(1);
     const [confettiVisible, setConfettiVisible] = useState(false);
     
-    useEffect(() => {    
+    useEffect(() => {
+      socket?.connect();
       playerJoinedGame(currPlayerId);
 
       //Make API call for board state
