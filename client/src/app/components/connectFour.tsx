@@ -21,9 +21,9 @@ export default function ConnectFour() {
 
   const joinGame = (gameId: number | null, playerId: number | null) => {
     // Switch from Lobby to Board
-    setGameStatus('playing');
     setRoomId(gameId);
     setCurrentPlayer(playerId);
+    setGameStatus('playing');
   };
 
   const quitGame = (gameId: number | null, playerId: number | null) => {
@@ -38,8 +38,7 @@ export default function ConnectFour() {
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           Connect Four Multiplayer
         </h1>
-
-        <h2>
+        <h2 className="mb-6 text-gray-600">
           {message}
         </h2>
 

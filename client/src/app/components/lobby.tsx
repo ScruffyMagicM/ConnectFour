@@ -20,7 +20,7 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
 
     const [games, setGames] = useState<GameIndexDTO[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { socket, isConnected } = useSocketConnection();
+    const socket = useSocketConnection();
 
   // Lobby-specific socket events and actions
     const { createGame, joinGame, quitGame } = useLobbySocket(socket, {
@@ -101,7 +101,9 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
         }
         setGames(newGames);
         setIsLoading(false);
+        console.log("Connecting socket...");
         socket?.connect();
+        console.log("Socket connected.");
     });
   }, []);
 

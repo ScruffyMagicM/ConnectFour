@@ -189,18 +189,18 @@ const useLobbySocket = (socket, callbacks)=>{
         callbacks
     ]);
     const createGame = (name)=>{
-        socket?.emit('createGame', {
+        socket?.emit('gameCreated', {
             name
         });
     };
     const joinGame = (roomId, playerId)=>{
-        socket?.emit('joinGame', {
+        socket?.emit('playerJoined', {
             roomId: roomId,
             playerId: playerId
         });
     };
     const quitGame = (roomId, playerId)=>{
-        socket?.emit('quitGame', {
+        socket?.emit('playerQuit', {
             roomId,
             playerId
         });
@@ -310,33 +310,43 @@ __turbopack_context__.s([
     "useSocketConnection",
     ()=>useSocketConnection
 ]);
-var __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/client/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$socket$2e$io$2d$client$2f$build$2f$esm$2d$debug$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/client/node_modules/socket.io-client/build/esm-debug/index.js [app-ssr] (ecmascript) <locals>");
 ;
-;
+let socket;
 const useSocketConnection = ()=>{
-    const [socket, setSocket] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [isConnected, setIsConnected] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        const newSocket = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$socket$2e$io$2d$client$2f$build$2f$esm$2d$debug$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["io"])('http://localhost:3001');
-        setSocket(newSocket);
-        newSocket.on('connect', ()=>{
-            setIsConnected(true);
-            console.log('Socket connected');
+    if (!socket) {
+        socket = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$socket$2e$io$2d$client$2f$build$2f$esm$2d$debug$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["io"])('http://localhost:3001', {
+            autoConnect: false,
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionAttempts: 5
         });
-        newSocket.on('disconnect', ()=>{
-            setIsConnected(false);
-            console.log('Socket disconnected');
-        });
-        return ()=>{
-            newSocket.close();
-        };
-    }, []);
-    return {
-        socket,
-        isConnected
+    }
+    return socket;
+}; /*  const [socket, setSocket] = useState<Socket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => {
+      setIsConnected(true);
+      console.log('Socket connected');
+    });
+
+    newSocket.on('disconnect', () => {
+      setIsConnected(false);
+      console.log('Socket disconnected');
+    });
+
+    return () => {
+      newSocket.disconnect();
     };
-};
+  }, []);
+
+  return { socket, isConnected };
+};*/ 
 }),
 "[project]/client/src/app/components/lobby.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -364,7 +374,7 @@ function Lobby({ enterGame, setMessage }) {
     const { roomId, setRoomId, currentPlayer, setCurrentPlayer, justQuitGame, setJustQuitGame } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useAppState$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAppState"])();
     const [games, setGames] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
-    const { socket, isConnected } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useSocketConnection$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSocketConnection"])();
+    const socket = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useSocketConnection$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSocketConnection"])();
     // Lobby-specific socket events and actions
     const { createGame, joinGame, quitGame } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useLobbySocket$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useLobbySocket"])(socket, {
         onGameCreated: (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(({ roomName, gameId })=>{
@@ -449,7 +459,9 @@ function Lobby({ enterGame, setMessage }) {
             }
             setGames(newGames);
             setIsLoading(false);
+            console.log("Connecting socket...");
             socket?.connect();
+            console.log("Socket connected.");
         });
     }, []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -462,12 +474,12 @@ function Lobby({ enterGame, setMessage }) {
                     joinGame: clickJoinGame
                 }, void 0, false, {
                     fileName: "[project]/client/src/app/components/lobby.tsx",
-                    lineNumber: 112,
+                    lineNumber: 114,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 111,
+                lineNumber: 113,
                 columnNumber: 15
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -476,13 +488,13 @@ function Lobby({ enterGame, setMessage }) {
                 children: "Create Game"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 115,
+                lineNumber: 117,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/client/src/app/components/lobby.tsx",
-        lineNumber: 109,
+        lineNumber: 111,
         columnNumber: 9
     }, this);
 }
@@ -495,7 +507,7 @@ function GamesList({ games, joinGame }) {
                 children: "Game Name"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 124,
+                lineNumber: 126,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -503,7 +515,7 @@ function GamesList({ games, joinGame }) {
                 children: "Players"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 125,
+                lineNumber: 127,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -511,7 +523,7 @@ function GamesList({ games, joinGame }) {
                 children: "Action"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 126,
+                lineNumber: 128,
                 columnNumber: 7
             }, this),
             games.map((game)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -520,7 +532,7 @@ function GamesList({ games, joinGame }) {
                             children: game.name
                         }, `${game.id}-name`, false, {
                             fileName: "[project]/client/src/app/components/lobby.tsx",
-                            lineNumber: 131,
+                            lineNumber: 133,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -530,7 +542,7 @@ function GamesList({ games, joinGame }) {
                             ]
                         }, `${game.id}-players`, true, {
                             fileName: "[project]/client/src/app/components/lobby.tsx",
-                            lineNumber: 132,
+                            lineNumber: 134,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -539,7 +551,7 @@ function GamesList({ games, joinGame }) {
                             children: "Join"
                         }, `${game.id}-button`, false, {
                             fileName: "[project]/client/src/app/components/lobby.tsx",
-                            lineNumber: 133,
+                            lineNumber: 135,
                             columnNumber: 11
                         }, this)
                     ]
@@ -547,7 +559,7 @@ function GamesList({ games, joinGame }) {
         ]
     }, void 0, true, {
         fileName: "[project]/client/src/app/components/lobby.tsx",
-        lineNumber: 122,
+        lineNumber: 124,
         columnNumber: 5
     }, this);
 }
@@ -609,6 +621,7 @@ const useGameSocket = (socket, callbacks)=>{
         socket,
         callbacks
     ]);
+    //Rewrite to use REST call, then just have the callbacks after server does full emit?
     const playerJoinedGame = (playerId)=>{
         socket?.emit('playerJoinedGame', {
             playerId
@@ -654,7 +667,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hook
 function Board({ gameId, playerId, setMessage, leaveGame }) {
     const currGameId = gameId;
     const currPlayerId = playerId;
-    const { socket, isConnected } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useSocketConnection$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSocketConnection"])();
+    const socket = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useSocketConnection$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSocketConnection"])();
     const { playerJoinedGame, playerQuitGame, updateGameState } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useGameSocket$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useGameSocket"])(socket, {
         onPlayerJoinedGame (data) {
             setMessage(`Player ${data.playerId} joined the game.`);
@@ -1219,9 +1232,9 @@ function ConnectFour() {
     const { gameStatus, setGameStatus, message, setMessage, roomId, setRoomId, currentPlayer, setCurrentPlayer, setJustQuitGame } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useAppState$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAppState"])();
     const joinGame = (gameId, playerId)=>{
         // Switch from Lobby to Board
-        setGameStatus('playing');
         setRoomId(gameId);
         setCurrentPlayer(playerId);
+        setGameStatus('playing');
     };
     const quitGame = (gameId, playerId)=>{
         // Switch from Board to Lobby
@@ -1242,10 +1255,11 @@ function ConnectFour() {
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                    className: "mb-6 text-gray-600",
                     children: message
                 }, void 0, false, {
                     fileName: "[project]/client/src/app/components/connectFour.tsx",
-                    lineNumber: 42,
+                    lineNumber: 41,
                     columnNumber: 9
                 }, this),
                 gameStatus === 'lobby' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$components$2f$lobby$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1253,7 +1267,7 @@ function ConnectFour() {
                     setMessage: setMessage
                 }, void 0, false, {
                     fileName: "[project]/client/src/app/components/connectFour.tsx",
-                    lineNumber: 47,
+                    lineNumber: 46,
                     columnNumber: 11
                 }, this),
                 gameStatus === 'playing' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$components$2f$board$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1263,7 +1277,7 @@ function ConnectFour() {
                     leaveGame: quitGame
                 }, void 0, false, {
                     fileName: "[project]/client/src/app/components/connectFour.tsx",
-                    lineNumber: 51,
+                    lineNumber: 50,
                     columnNumber: 11
                 }, this)
             ]

@@ -29,7 +29,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   // Player joined handlers
-   @SubscribeMessage('playerJoinedGame')
+   @SubscribeMessage('didPlayerJoinedGame')
     handlePlayerJoined(@MessageBody() playerId: number, @ConnectedSocket() client: Socket): number {
       console.log(`Player joined: ${playerId}`);
       return playerId;
@@ -40,7 +40,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
   // Player quit handlers
-   @SubscribeMessage('playerQuitGame')
+   @SubscribeMessage('didPlayerQuitGame')
    handlePlayerQuit(@MessageBody() playerId: number, @ConnectedSocket() client: Socket): number {
      console.log(`Player quit: ${playerId}`);
      return playerId;
@@ -51,7 +51,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
   // Game state update handlers
-    @SubscribeMessage('gameStateUpdate')
+    @SubscribeMessage('didGameStateUpdate')
     handleGameStateUpdate(@MessageBody() gameState: GameStateDTO, @ConnectedSocket() client: Socket): GameStateDTO {
       console.log(`Game state updated: ${JSON.stringify(gameState)}`);
       return gameState;

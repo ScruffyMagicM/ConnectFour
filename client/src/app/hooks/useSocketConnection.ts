@@ -2,8 +2,21 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-export const useSocketConnection = () => {
-  const [socket, setSocket] = useState<Socket | null>(null);
+let socket: Socket;
+
+export const useSocketConnection = () => {  
+  if (!socket) {
+    socket = io('http://localhost:3001', {
+      autoConnect: false,
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5
+    });
+  }
+  return socket;
+};
+
+/*  const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
@@ -21,9 +34,9 @@ export const useSocketConnection = () => {
     });
 
     return () => {
-      newSocket.close();
+      newSocket.disconnect();
     };
   }, []);
 
   return { socket, isConnected };
-};
+};*/

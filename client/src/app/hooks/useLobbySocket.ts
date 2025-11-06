@@ -24,15 +24,15 @@ export const useLobbySocket = (socket: Socket | null, callbacks: LobbySocketCall
   }, [socket, callbacks]);
 
   const createGame = (name: string) => {
-    socket?.emit('createGame', { name });
+    socket?.emit('gameCreated', { name });
   };
 
   const joinGame = (roomId: number, playerId: number) => {
-    socket?.emit('joinGame', { roomId: roomId, playerId: playerId });
+    socket?.emit('playerJoined', { roomId: roomId, playerId: playerId });
   };
 
   const quitGame = (roomId: number, playerId: number) => {
-    socket?.emit('quitGame', { roomId, playerId });
+    socket?.emit('playerQuit', { roomId, playerId });
   }
 
   return { createGame, joinGame, quitGame };

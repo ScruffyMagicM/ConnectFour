@@ -12,7 +12,7 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
 
     const currGameId = gameId!;
     const currPlayerId = playerId!;
-    const { socket, isConnected } = useSocketConnection();
+    const socket = useSocketConnection();
 
     const { playerJoinedGame, playerQuitGame, updateGameState } = useGameSocket(socket, {
     onPlayerJoinedGame(data) {

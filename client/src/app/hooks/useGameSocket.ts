@@ -27,6 +27,8 @@ export const useGameSocket = (
     };
   }, [socket, callbacks]);
 
+  //Rewrite to use REST call, then just have the callbacks after server does full emit?
+
   const playerJoinedGame = (playerId: number) => {
     socket?.emit('playerJoinedGame', { playerId });
   };

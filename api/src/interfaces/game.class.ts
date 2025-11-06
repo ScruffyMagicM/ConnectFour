@@ -17,6 +17,7 @@ export class Game {
   @Column()
   completed: boolean;
 
+  @Column('jsonb', { nullable: true, default: [] })
   players: number[] = [];
 }
 
