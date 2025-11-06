@@ -376,7 +376,7 @@ function Lobby({ enterGame, setMessage }) {
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const socket = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useSocketConnection$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSocketConnection"])();
     // Lobby-specific socket events and actions
-    const { createGame, joinGame, quitGame } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useLobbySocket$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useLobbySocket"])(socket, {
+    const {} = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useLobbySocket$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useLobbySocket"])(socket, {
         onGameCreated: (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(({ roomName, gameId })=>{
             //List new game in lobby
             games.push({
@@ -417,7 +417,6 @@ function Lobby({ enterGame, setMessage }) {
                 setMessage(`Joined game ${gameId}!`);
                 setCurrentPlayer(game.players + 1);
                 setRoomId(gameId);
-                joinGame(gameId, game.players + 1);
                 socket?.disconnect();
                 enterGame(gameId, game.players + 1);
             }
@@ -433,7 +432,6 @@ function Lobby({ enterGame, setMessage }) {
         __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$lobbyAPIService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["lobbyApiService"].createGame(gameName ? gameName : tempName).then((response)=>{
             if (response.data) {
                 setMessage(`Game "${gameName ? gameName : tempName}" created!`);
-                createGame(gameName ? gameName : tempName);
                 games.push(response.data);
                 setGames(games);
             }
@@ -441,7 +439,6 @@ function Lobby({ enterGame, setMessage }) {
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (justQuitGame === true) {
-            quitGame(roomId, currentPlayer);
             setJustQuitGame(false);
         }
     }, [
@@ -474,12 +471,12 @@ function Lobby({ enterGame, setMessage }) {
                     joinGame: clickJoinGame
                 }, void 0, false, {
                     fileName: "[project]/client/src/app/components/lobby.tsx",
-                    lineNumber: 114,
+                    lineNumber: 111,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 113,
+                lineNumber: 110,
                 columnNumber: 15
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -488,13 +485,13 @@ function Lobby({ enterGame, setMessage }) {
                 children: "Create Game"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 117,
+                lineNumber: 114,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/client/src/app/components/lobby.tsx",
-        lineNumber: 111,
+        lineNumber: 108,
         columnNumber: 9
     }, this);
 }
@@ -507,7 +504,7 @@ function GamesList({ games, joinGame }) {
                 children: "Game Name"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 126,
+                lineNumber: 123,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -515,7 +512,7 @@ function GamesList({ games, joinGame }) {
                 children: "Players"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 127,
+                lineNumber: 124,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -523,7 +520,7 @@ function GamesList({ games, joinGame }) {
                 children: "Action"
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/lobby.tsx",
-                lineNumber: 128,
+                lineNumber: 125,
                 columnNumber: 7
             }, this),
             games.map((game)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -532,7 +529,7 @@ function GamesList({ games, joinGame }) {
                             children: game.name
                         }, `${game.id}-name`, false, {
                             fileName: "[project]/client/src/app/components/lobby.tsx",
-                            lineNumber: 133,
+                            lineNumber: 130,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -542,7 +539,7 @@ function GamesList({ games, joinGame }) {
                             ]
                         }, `${game.id}-players`, true, {
                             fileName: "[project]/client/src/app/components/lobby.tsx",
-                            lineNumber: 134,
+                            lineNumber: 131,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -551,7 +548,7 @@ function GamesList({ games, joinGame }) {
                             children: "Join"
                         }, `${game.id}-button`, false, {
                             fileName: "[project]/client/src/app/components/lobby.tsx",
-                            lineNumber: 135,
+                            lineNumber: 132,
                             columnNumber: 11
                         }, this)
                     ]
@@ -559,7 +556,7 @@ function GamesList({ games, joinGame }) {
         ]
     }, void 0, true, {
         fileName: "[project]/client/src/app/components/lobby.tsx",
-        lineNumber: 124,
+        lineNumber: 121,
         columnNumber: 5
     }, this);
 }
@@ -668,7 +665,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
     const currGameId = gameId;
     const currPlayerId = playerId;
     const socket = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useSocketConnection$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSocketConnection"])();
-    const { playerJoinedGame, playerQuitGame, updateGameState } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useGameSocket$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useGameSocket"])(socket, {
+    const {} = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$hooks$2f$useGameSocket$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useGameSocket"])(socket, {
         onPlayerJoinedGame (data) {
             setMessage(`Player ${data.playerId} joined the game.`);
         },
@@ -690,7 +687,6 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
     const [confettiVisible, setConfettiVisible] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         socket?.connect();
-        playerJoinedGame(currPlayerId);
         //Make API call for board state
         __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["gameApiService"].getGame(currGameId).then((response)=>{
             setBoard(response.data.board);
@@ -719,7 +715,6 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
     function quitGame() {
         __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["gameApiService"].quitGame(currGameId, currPlayerId).then(()=>{
             setMessage(`You quit the game.`);
-            playerQuitGame(currPlayerId);
             leaveGame(currGameId, currPlayerId);
         });
     }
@@ -735,11 +730,6 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
             setBoard(newSquares);
             rowTop[column] = findSingleRowTop(newSquares, column);
             setRowTop(rowTop);
-            updateGameState({
-                board: board,
-                lastMove: id,
-                turn: response.data
-            });
             if (response.data > 2) {
                 endGame(currPlayerId);
             }
@@ -766,7 +756,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 118,
+                lineNumber: 115,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -780,7 +770,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 121,
+                                lineNumber: 118,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -788,7 +778,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 122,
+                                lineNumber: 119,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -796,7 +786,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 123,
+                                lineNumber: 120,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -804,7 +794,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 124,
+                                lineNumber: 121,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -812,7 +802,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 125,
+                                lineNumber: 122,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -820,7 +810,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 126,
+                                lineNumber: 123,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -828,13 +818,13 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 127,
+                                lineNumber: 124,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 120,
+                        lineNumber: 117,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -845,7 +835,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 130,
+                                lineNumber: 127,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -853,7 +843,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 131,
+                                lineNumber: 128,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -861,7 +851,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 132,
+                                lineNumber: 129,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -869,7 +859,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 133,
+                                lineNumber: 130,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -877,7 +867,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 134,
+                                lineNumber: 131,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -885,7 +875,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 135,
+                                lineNumber: 132,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -893,13 +883,13 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 136,
+                                lineNumber: 133,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 129,
+                        lineNumber: 126,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -910,7 +900,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 139,
+                                lineNumber: 136,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -918,7 +908,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 140,
+                                lineNumber: 137,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -926,7 +916,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 141,
+                                lineNumber: 138,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -934,7 +924,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 142,
+                                lineNumber: 139,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -942,7 +932,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 143,
+                                lineNumber: 140,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -950,7 +940,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 144,
+                                lineNumber: 141,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -958,13 +948,13 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 145,
+                                lineNumber: 142,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 138,
+                        lineNumber: 135,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -975,7 +965,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 148,
+                                lineNumber: 145,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -983,7 +973,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 149,
+                                lineNumber: 146,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -991,7 +981,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 150,
+                                lineNumber: 147,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -999,7 +989,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 151,
+                                lineNumber: 148,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1007,7 +997,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 152,
+                                lineNumber: 149,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1015,7 +1005,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 153,
+                                lineNumber: 150,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1023,13 +1013,13 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 154,
+                                lineNumber: 151,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 147,
+                        lineNumber: 144,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1040,7 +1030,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 157,
+                                lineNumber: 154,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1048,7 +1038,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 158,
+                                lineNumber: 155,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1056,7 +1046,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 159,
+                                lineNumber: 156,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1064,7 +1054,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 160,
+                                lineNumber: 157,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1072,7 +1062,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 161,
+                                lineNumber: 158,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1080,7 +1070,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 162,
+                                lineNumber: 159,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1088,13 +1078,13 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 163,
+                                lineNumber: 160,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 156,
+                        lineNumber: 153,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1105,7 +1095,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 166,
+                                lineNumber: 163,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1113,7 +1103,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 167,
+                                lineNumber: 164,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1121,7 +1111,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 168,
+                                lineNumber: 165,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1129,7 +1119,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 169,
+                                lineNumber: 166,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1137,7 +1127,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 170,
+                                lineNumber: 167,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1145,7 +1135,7 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 171,
+                                lineNumber: 168,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
@@ -1153,30 +1143,30 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 172,
+                                lineNumber: 169,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 165,
+                        lineNumber: 162,
                         columnNumber: 5
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 119,
+                lineNumber: 116,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 children: confettiVisible && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$canvas$2d$confetti$2f$dist$2f$confetti$2e$module$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/client/src/app/components/board.tsx",
-                    lineNumber: 175,
+                    lineNumber: 172,
                     columnNumber: 30
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 175,
+                lineNumber: 172,
                 columnNumber: 5
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1186,18 +1176,18 @@ function Board({ gameId, playerId, setMessage, leaveGame }) {
                     children: "Quit Game"
                 }, void 0, false, {
                     fileName: "[project]/client/src/app/components/board.tsx",
-                    lineNumber: 176,
+                    lineNumber: 173,
                     columnNumber: 10
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 176,
+                lineNumber: 173,
                 columnNumber: 5
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/client/src/app/components/board.tsx",
-        lineNumber: 117,
+        lineNumber: 114,
         columnNumber: 9
     }, this);
 }
@@ -1207,7 +1197,7 @@ function Square({ value, onSquareClick }) {
         onClick: onSquareClick
     }, void 0, false, {
         fileName: "[project]/client/src/app/components/board.tsx",
-        lineNumber: 182,
+        lineNumber: 179,
         columnNumber: 10
     }, this);
 }

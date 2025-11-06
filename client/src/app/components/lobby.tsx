@@ -23,7 +23,7 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
     const socket = useSocketConnection();
 
   // Lobby-specific socket events and actions
-    const { createGame, joinGame, quitGame } = useLobbySocket(socket, {
+    const { } = useLobbySocket(socket, {
     onGameCreated: useCallback(({ roomName, gameId }) => {
       //List new game in lobby
       games.push({ id: gameId, name: roomName, players: 0 });
@@ -55,7 +55,6 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
             setMessage(`Joined game ${gameId}!`);
             setCurrentPlayer(game.players + 1);
             setRoomId(gameId);
-            joinGame(gameId, game.players + 1);
             socket?.disconnect();
             enterGame(gameId, game.players + 1);
         }
@@ -75,7 +74,6 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
     lobbyApiService.createGame(gameName ? gameName : tempName).then(response => {
         if(response.data){
             setMessage(`Game "${gameName ? gameName : tempName}" created!`);
-            createGame(gameName ? gameName : tempName);
             games.push(response.data);
             setGames(games);
         }
@@ -84,7 +82,6 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
 
   useEffect(() => {
     if(justQuitGame === true){
-      quitGame(roomId!, currentPlayer!);
       setJustQuitGame(false);
     }
   }, [justQuitGame]);

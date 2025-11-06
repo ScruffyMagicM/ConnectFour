@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { Game } from './interfaces/game.class';
 import { GameModule } from './game/game.module';
 import { LobbyModule } from './lobby/lobby.module';
-import { LobbyController } from './lobby/lobby.controller';
-import { GameController } from './game/game.controller';
+import { BroadcastService } from './websocket/broadcast.service';
+import { WebSocketModule } from './websocket/broadcast.module';
 
 @Module({
   imports: [
@@ -21,7 +19,8 @@ import { GameController } from './game/game.controller';
       synchronize: true
     }),
     GameModule,
-    LobbyModule
+    LobbyModule,
+    WebSocketModule
   ],
   controllers: [],
   providers: [],

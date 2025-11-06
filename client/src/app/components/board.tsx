@@ -14,7 +14,7 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
     const currPlayerId = playerId!;
     const socket = useSocketConnection();
 
-    const { playerJoinedGame, playerQuitGame, updateGameState } = useGameSocket(socket, {
+    const { } = useGameSocket(socket, {
     onPlayerJoinedGame(data) {
       setMessage(`Player ${data.playerId} joined the game.`);
     },
@@ -38,7 +38,6 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
     
     useEffect(() => {
       socket?.connect();
-      playerJoinedGame(currPlayerId);
 
       //Make API call for board state
       gameApiService.getGame(currGameId).then(response => {
@@ -71,7 +70,6 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
     function quitGame(){
       gameApiService.quitGame(currGameId, currPlayerId).then(() => {
         setMessage(`You quit the game.`);
-        playerQuitGame(currPlayerId); 
         leaveGame(currGameId, currPlayerId);
       });
     }
@@ -92,7 +90,6 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
             setBoard(newSquares);
             rowTop[column] = findSingleRowTop(newSquares, column);
             setRowTop(rowTop);
-            updateGameState({ board: board, lastMove: id, turn: response.data });
             if(response.data > 2){
                 endGame(currPlayerId);
             }

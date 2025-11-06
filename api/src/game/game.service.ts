@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game, GameStateDTO } from 'src/interfaces/game.class';
 import { Repository } from 'typeorm/repository/Repository.js';
-import { GameGateway } from './game.gateway';
+import { BroadcastService } from 'src/websocket/broadcast.service';
 
 // Needs to maintain board state, player turns, win conditions, etc.
 
@@ -11,10 +11,10 @@ export class GameService {
   constructor(
     @InjectRepository(Game)
     private readonly gameRepository: Repository<Game>,
-    private readonly gameGateway: GameGateway,
+    private readonly broadcastService: BroadcastService,
   ) {}
 
-  async JoinGame(id: number): Promise<GameStateDTO> {
+  async JoinGame(id: number, socketId: string): Promise<GameStateDTO> {
     const game = await this.gameRepository.findOneBy({ id: id });
     
     if (!game) throw new Error('Game not found');
@@ -24,7 +24,7 @@ export class GameService {
     game.players.push(game.players.length + 1);
     this.gameRepository.update(game.id, {players: game.players});
 
-    this.gameGateway.broadcastPlayerJoined(game.players.length);
+    this.broadcastService.emitToOthers('game', 'playerJoinedGame', game.players.length, socketId);
     return await this.GetGameState(game);
   }
 
@@ -36,7 +36,7 @@ export class GameService {
     };
   }
 
-  async QuitGame(id: number, playerId: number): Promise<void> {
+  async QuitGame(id: number, playerId: number, socketId: string): Promise<void> {
     const game = await this.gameRepository.findOneBy({ id: id });
     if (!game) throw new Error('Game not found');
     if (!game.players.includes(playerId)) throw new Error('Player not in game');
@@ -44,10 +44,10 @@ export class GameService {
     game.players.splice(game.players.indexOf(playerId), 1);
 
     await this.gameRepository.update(id, { players: game.players });
-    this.gameGateway.broadcastPlayerQuit(id);
+    this.broadcastService.emitToOthers('game', 'playerQuitGame', id, socketId);
   }
 
-  async UpdateGameState(id: number, move: number, playerId: number): Promise<number> {
+  async UpdateGameState(id: number, move: number, playerId: number, socketId: string): Promise<number> {
     const game = await this.gameRepository.findOneBy({ id: id }); 
     
     if (!game) throw new Error('Game not found');    
@@ -71,12 +71,13 @@ export class GameService {
 
     if (result) {
       // Handle victory (e.g., notify players, update game status)
-      this.gameGateway.broadcastGameStateUpdate(id, { board: game.board, lastMove: move, turn: game.turn });
+
+      this.broadcastService.emitToOthersRoom('game', `game-${id}`, 'gameStateUpdate', { board: game.board, lastMove: move, turn: game.turn }, socketId);
       return playerId == 1 ? 3 : 4; // Return the winning player
     }
 
     // Notify players of the updated game state
-    this.gameGateway.broadcastGameStateUpdate(id, { board: game.board, lastMove: move, turn: game.turn });
+    this.broadcastService.emitToOthersRoom('game', `game-${id}`, 'gameStateUpdate', { board: game.board, lastMove: move, turn: game.turn }, socketId);
 
     return game.turn;
   }

@@ -19,7 +19,7 @@ export class LobbyService {
         }));
     }
 
-    async createGame(gameName: string): Promise<GameIndexDTO> {
+    async createGame(gameName: string, socketId: string): Promise<GameIndexDTO> {
         const newGame = this.gameRepository.create({
             name: gameName,
             board: Array(42).fill(0),
@@ -31,7 +31,7 @@ export class LobbyService {
         return { id: newGame.id, name: newGame.name};
     }
 
-    async joinGame(playerId: number, gameId: number): Promise<GameDetailsDTO> {
+    async joinGame(playerId: number, gameId: number, socketId: string): Promise<GameDetailsDTO> {
         const game = await this.gameRepository.findOneBy({ id: gameId });
         if (!game) 
             throw new NotFoundException('Game not found');
@@ -40,7 +40,7 @@ export class LobbyService {
         return await game;
     }
 
-    async quitGame(playerId: number, gameId: number): Promise<void> {
+    async quitGame(playerId: number, gameId: number, socketId: string): Promise<void> {
         const game = await this.gameRepository.findOneBy({ id: gameId });
         if (!game) 
             throw new NotFoundException('Game not found');

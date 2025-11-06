@@ -3,6 +3,7 @@ import { LobbyService } from './lobby.service';
 import type { Game, GameDetailsDTO, GameIndexDTO } from '../interfaces/game.class';
 import { ApiResponse } from 'src/interfaces/api.interface';
 import * as ApiUtils from 'src/utils/api.utils';
+import { SocketId } from 'src/utils/decorators.utils';
 
 @Controller('lobby')
 export class LobbyController {
@@ -14,18 +15,18 @@ export class LobbyController {
   }
 
   @Post('create')
-  async createGame(@Body('gameName') gameName: string): Promise<ApiResponse<GameIndexDTO>> {
-    return ApiUtils.createApiResponse(this.lobbyService.createGame(gameName), 'Game created successfully');
+  async createGame(@Body('gameName') gameName: string, @SocketId() socketId?: string): Promise<ApiResponse<GameIndexDTO>> {
+    return ApiUtils.createApiResponse(this.lobbyService.createGame(gameName, socketId!), 'Game created successfully');
   }
 
   @Post('join')
-  async joinGame(@Body('playerId') playerId: number, @Body('gameId') gameId: number): Promise<ApiResponse<GameDetailsDTO>> {
-    return ApiUtils.createApiResponse(this.lobbyService.joinGame(playerId, gameId), 'Game joined successfully');
+  async joinGame(@Body('playerId') playerId: number, @Body('gameId') gameId: number, @SocketId() socketId?: string): Promise<ApiResponse<GameDetailsDTO>> {
+    return ApiUtils.createApiResponse(this.lobbyService.joinGame(playerId, gameId, socketId!), 'Game joined successfully');
   }
 
   @Post('quit')
-  async quitGame(@Body('playerId') playerId: number, @Body('gameId') gameId: number): Promise<ApiResponse<void>> {
-    return ApiUtils.createApiResponse(this.lobbyService.quitGame(playerId, gameId), 'Game quit successfully');
+  async quitGame(@Body('playerId') playerId: number, @Body('gameId') gameId: number, @SocketId() socketId?: string): Promise<ApiResponse<void>> {
+    return ApiUtils.createApiResponse(this.lobbyService.quitGame(playerId, gameId, socketId!), 'Game quit successfully');
   }
 
 }
