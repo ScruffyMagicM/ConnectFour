@@ -50,9 +50,9 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
   const clickJoinGame = (gameId: number) => {
     const game = games.find(game => game.id === gameId);
     if(game === undefined || game.players > 1) return;
-    lobbyApiService.joinGame(game.players + 1, gameId).then(response => {
+    lobbyApiService.getGame(gameId).then(response => {
         if(response.data){
-            setMessage(`Joined game ${gameId}!`);
+            setMessage(`Joining game ${gameId}!`);
             setCurrentPlayer(game.players + 1);
             setRoomId(gameId);
             socket?.disconnect();
@@ -71,7 +71,7 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
 
     const tempName = `Game_${Math.floor(Math.random() * 1000)}`;
 
-    lobbyApiService.createGame(gameName ? gameName : tempName).then(response => {
+    lobbyApiService.createGame(gameName ? gameName : tempName, socket?.id!).then(response => {
         if(response.data){
             setMessage(`Game "${gameName ? gameName : tempName}" created!`);
             games.push(response.data);
@@ -88,7 +88,7 @@ export default function Lobby({ enterGame, setMessage }: { enterGame: (gameId: n
 
   useEffect(() => {  
     console.log("Fetching games list from lobby...");
-    lobbyApiService.getGames().then(response => {
+    lobbyApiService.getGames(socket?.id!).then(response => {
         console.log("Got lobby...");
         const newGames: GameIndexDTO[] = [];
         if(response.data){

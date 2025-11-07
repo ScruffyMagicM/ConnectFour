@@ -9,6 +9,22 @@ export class BroadcastService {
     private readonly lobbyGateway: LobbyGateway
   ) {}
 
+  joinRoom(socketId: string, gameId: string)
+  {
+      const socket = this.gameGateway.server.sockets.sockets.get(socketId);
+      if (socket) {
+        socket.join(`${gameId}`);
+      }
+  }
+
+  leaveRoom(socketId: string, gameId: string)
+  {
+      const socket = this.gameGateway.server.sockets.sockets.get(socketId);
+      if (socket) {
+        socket.leave(`${gameId}`);
+      }
+  }
+
   emitToOthers(
     gateway: 'lobby' | 'game',
     event: string,

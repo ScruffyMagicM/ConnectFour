@@ -95,33 +95,48 @@ class ApiClient {
             throw new Error('Unknown error occurred');
         }
     }
-    async get(endpoint, params) {
+    async get(endpoint, socketId, params) {
         const queryString = params ? '?' + new URLSearchParams(params).toString() : '';
         return this.request("".concat(endpoint).concat(queryString), {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'x-socket-id': socketId
+            }
         });
     }
-    async post(endpoint, data) {
+    async post(endpoint, socketId, data) {
         return this.request(endpoint, {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            headers: {
+                'x-socket-id': socketId
+            }
         });
     }
-    async put(endpoint, data) {
+    async put(endpoint, socketId, data) {
         return this.request(endpoint, {
             method: 'PUT',
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            headers: {
+                'x-socket-id': socketId
+            }
         });
     }
-    async delete(endpoint) {
+    async delete(endpoint, socketId) {
         return this.request(endpoint, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'x-socket-id': socketId
+            }
         });
     }
-    async patch(endpoint, data) {
+    async patch(endpoint, socketId, data) {
         return this.request(endpoint, {
             method: 'PATCH',
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            headers: {
+                'x-socket-id': socketId
+            }
         });
     }
     constructor(baseURL, timeout, headers){
@@ -152,22 +167,19 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$util
 ;
 ;
 class LobbyAPIService {
-    async getGames() {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get("".concat(this.basePath));
+    async getGames(socketId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get("".concat(this.basePath), socketId);
     }
-    async createGame(gameName) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/create"), {
+    async getGame(gameId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get("".concat(this.basePath, "/getGame/").concat(gameId), '');
+    }
+    async createGame(gameName, socketId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/create"), socketId, {
             gameName
         });
     }
-    async joinGame(playerId, gameId) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/join"), {
-            playerId,
-            gameId
-        });
-    }
-    async quitGame(playerId, gameId) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/quit"), {
+    async quitGame(playerId, gameId, socketId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/quit"), socketId, {
             playerId,
             gameId
         });
@@ -368,9 +380,9 @@ function Lobby(param) {
     const clickJoinGame = (gameId)=>{
         const game = games.find((game)=>game.id === gameId);
         if (game === undefined || game.players > 1) return;
-        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$lobbyAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["lobbyApiService"].joinGame(game.players + 1, gameId).then((response)=>{
+        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$lobbyAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["lobbyApiService"].getGame(gameId).then((response)=>{
             if (response.data) {
-                setMessage("Joined game ".concat(gameId, "!"));
+                setMessage("Joining game ".concat(gameId, "!"));
                 setCurrentPlayer(game.players + 1);
                 setRoomId(gameId);
                 socket === null || socket === void 0 ? void 0 : socket.disconnect();
@@ -385,7 +397,7 @@ function Lobby(param) {
             return;
         }
         const tempName = "Game_".concat(Math.floor(Math.random() * 1000));
-        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$lobbyAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["lobbyApiService"].createGame(gameName ? gameName : tempName).then((response)=>{
+        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$lobbyAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["lobbyApiService"].createGame(gameName ? gameName : tempName, socket === null || socket === void 0 ? void 0 : socket.id).then((response)=>{
             if (response.data) {
                 setMessage('Game "'.concat(gameName ? gameName : tempName, '" created!'));
                 games.push(response.data);
@@ -405,7 +417,7 @@ function Lobby(param) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Lobby.useEffect": ()=>{
             console.log("Fetching games list from lobby...");
-            __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$lobbyAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["lobbyApiService"].getGames().then({
+            __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$lobbyAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["lobbyApiService"].getGames(socket === null || socket === void 0 ? void 0 : socket.id).then({
                 "Lobby.useEffect": (response)=>{
                     console.log("Got lobby...");
                     const newGames = [];
@@ -558,18 +570,24 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$util
 ;
 ;
 class GameService {
-    async getGame(gameId) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get("".concat(this.basePath, "/").concat(gameId));
+    async getGame(gameId, socketId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get("".concat(this.basePath, "/").concat(gameId), socketId);
     }
-    async updateGameState(gameId, move, playerId) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/updateGameState"), {
+    async joinGame(playerId, gameId, socketId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/join"), socketId, {
+            playerId,
+            gameId
+        });
+    }
+    async updateGameState(gameId, move, playerId, socketId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/updateGameState"), socketId, {
             gameId,
             move,
             playerId
         });
     }
-    async quitGame(gameId, playerId) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/quitGame"), {
+    async quitGame(gameId, playerId, socketId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$utils$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post("".concat(this.basePath, "/quitGame"), socketId, {
             gameId: gameId,
             playerId: playerId
         });
@@ -682,6 +700,7 @@ function Board(param) {
                 if (data.game.turn > 2) {
                     endGame(data.game.turn);
                 }
+                setTurn(data.game.turn);
             }
         }["Board.useGameSocket"]
     });
@@ -692,15 +711,27 @@ function Board(param) {
     const [confettiVisible, setConfettiVisible] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Board.useEffect": ()=>{
-            socket === null || socket === void 0 ? void 0 : socket.connect();
-            //Make API call for board state
-            __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["gameApiService"].getGame(currGameId).then({
-                "Board.useEffect": (response)=>{
-                    setBoard(response.data.board);
-                    setTurn(response.data.turn);
-                    setRowTop(findRowTop(response.data.board));
+            if (!socket) return;
+            socket.connect();
+            const handleConnect = {
+                "Board.useEffect.handleConnect": ()=>{
+                    __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["gameApiService"].joinGame(currPlayerId, currGameId, socket.id).then({
+                        "Board.useEffect.handleConnect": (response)=>{
+                            setBoard(response.data.board);
+                            setTurn(response.data.turn);
+                            setRowTop(findRowTop(response.data.board));
+                        }
+                    }["Board.useEffect.handleConnect"]);
                 }
-            }["Board.useEffect"]);
+            }["Board.useEffect.handleConnect"];
+            socket.on('connect', handleConnect);
+            // Cleanup function
+            return ({
+                "Board.useEffect": ()=>{
+                    socket.off('connect', handleConnect);
+                    socket.disconnect();
+                }
+            })["Board.useEffect"];
         }
     }["Board.useEffect"], []);
     function findRowTop(board) {
@@ -722,7 +753,7 @@ function Board(param) {
         return top;
     }
     function quitGame() {
-        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["gameApiService"].quitGame(currGameId, currPlayerId).then(()=>{
+        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["gameApiService"].quitGame(currGameId, currPlayerId, socket === null || socket === void 0 ? void 0 : socket.id).then(()=>{
             setMessage("You quit the game.");
             leaveGame(currGameId, currPlayerId);
         });
@@ -733,7 +764,7 @@ function Board(param) {
         if (board[id] !== 0) return; // already filled
         rowTop[column] -= 1;
         // Submit new move to server here
-        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["gameApiService"].updateGameState(currGameId, id, turn).then((response)=>{
+        __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$src$2f$app$2f$services$2f$gameAPIService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["gameApiService"].updateGameState(currGameId, id, turn, socket === null || socket === void 0 ? void 0 : socket.id).then((response)=>{
             const newSquares = board.slice();
             newSquares[id] = turn;
             setBoard(newSquares);
@@ -765,8 +796,8 @@ function Board(param) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 115,
-                columnNumber: 9
+                lineNumber: 127,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "board",
@@ -779,62 +810,62 @@ function Board(param) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 118,
-                                columnNumber: 9
+                                lineNumber: 130,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[1],
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 119,
-                                columnNumber: 9
+                                lineNumber: 131,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[2],
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 120,
-                                columnNumber: 9
+                                lineNumber: 132,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[3],
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 121,
-                                columnNumber: 9
+                                lineNumber: 133,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[4],
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 122,
-                                columnNumber: 9
+                                lineNumber: 134,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[5],
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 123,
-                                columnNumber: 9
+                                lineNumber: 135,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[6],
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 124,
-                                columnNumber: 9
+                                lineNumber: 136,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 117,
-                        columnNumber: 7
+                        lineNumber: 129,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "board-row",
@@ -844,62 +875,62 @@ function Board(param) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 127,
-                                columnNumber: 9
+                                lineNumber: 139,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[8],
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 128,
-                                columnNumber: 9
+                                lineNumber: 140,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[9],
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 129,
-                                columnNumber: 9
+                                lineNumber: 141,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[10],
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 130,
-                                columnNumber: 9
+                                lineNumber: 142,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[11],
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 131,
-                                columnNumber: 9
+                                lineNumber: 143,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[12],
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 132,
-                                columnNumber: 9
+                                lineNumber: 144,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[13],
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 133,
-                                columnNumber: 9
+                                lineNumber: 145,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 126,
-                        columnNumber: 7
+                        lineNumber: 138,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "board-row",
@@ -909,62 +940,62 @@ function Board(param) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 136,
-                                columnNumber: 9
+                                lineNumber: 148,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[15],
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 137,
-                                columnNumber: 9
+                                lineNumber: 149,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[16],
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 138,
-                                columnNumber: 9
+                                lineNumber: 150,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[17],
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 139,
-                                columnNumber: 9
+                                lineNumber: 151,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[18],
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 140,
-                                columnNumber: 9
+                                lineNumber: 152,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[19],
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 141,
-                                columnNumber: 9
+                                lineNumber: 153,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[20],
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 142,
-                                columnNumber: 9
+                                lineNumber: 154,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 135,
-                        columnNumber: 7
+                        lineNumber: 147,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "board-row",
@@ -974,62 +1005,62 @@ function Board(param) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 145,
-                                columnNumber: 9
+                                lineNumber: 157,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[22],
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 146,
-                                columnNumber: 9
+                                lineNumber: 158,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[23],
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 147,
-                                columnNumber: 9
+                                lineNumber: 159,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[24],
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 148,
-                                columnNumber: 9
+                                lineNumber: 160,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[25],
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 149,
-                                columnNumber: 9
+                                lineNumber: 161,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[26],
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 150,
-                                columnNumber: 9
+                                lineNumber: 162,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[27],
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 151,
-                                columnNumber: 9
+                                lineNumber: 163,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 144,
-                        columnNumber: 7
+                        lineNumber: 156,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "board-row",
@@ -1039,61 +1070,61 @@ function Board(param) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 154,
-                                columnNumber: 9
+                                lineNumber: 166,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[29],
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 155,
-                                columnNumber: 9
+                                lineNumber: 167,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[30],
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 156,
-                                columnNumber: 9
+                                lineNumber: 168,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[31],
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 157,
-                                columnNumber: 9
+                                lineNumber: 169,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[32],
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 158,
-                                columnNumber: 9
+                                lineNumber: 170,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[33],
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 159,
-                                columnNumber: 9
+                                lineNumber: 171,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[34],
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 160,
-                                columnNumber: 9
+                                lineNumber: 172,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 153,
+                        lineNumber: 165,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1104,79 +1135,79 @@ function Board(param) {
                                 onSquareClick: ()=>handleSquareClick(0)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 163,
-                                columnNumber: 9
+                                lineNumber: 175,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[36],
                                 onSquareClick: ()=>handleSquareClick(1)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 164,
-                                columnNumber: 9
+                                lineNumber: 176,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[37],
                                 onSquareClick: ()=>handleSquareClick(2)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 165,
-                                columnNumber: 9
+                                lineNumber: 177,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[38],
                                 onSquareClick: ()=>handleSquareClick(3)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 166,
-                                columnNumber: 9
+                                lineNumber: 178,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[39],
                                 onSquareClick: ()=>handleSquareClick(4)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 167,
-                                columnNumber: 9
+                                lineNumber: 179,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[40],
                                 onSquareClick: ()=>handleSquareClick(5)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 168,
-                                columnNumber: 9
+                                lineNumber: 180,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Square, {
                                 value: board[41],
                                 onSquareClick: ()=>handleSquareClick(6)
                             }, void 0, false, {
                                 fileName: "[project]/client/src/app/components/board.tsx",
-                                lineNumber: 169,
-                                columnNumber: 9
+                                lineNumber: 181,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/client/src/app/components/board.tsx",
-                        lineNumber: 162,
-                        columnNumber: 5
+                        lineNumber: 174,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 116,
-                columnNumber: 9
+                lineNumber: 128,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 children: confettiVisible && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$canvas$2d$confetti$2f$dist$2f$confetti$2e$module$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/client/src/app/components/board.tsx",
-                    lineNumber: 172,
-                    columnNumber: 30
+                    lineNumber: 184,
+                    columnNumber: 32
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 172,
-                columnNumber: 5
+                lineNumber: 184,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$client$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1185,19 +1216,19 @@ function Board(param) {
                     children: "Quit Game"
                 }, void 0, false, {
                     fileName: "[project]/client/src/app/components/board.tsx",
-                    lineNumber: 173,
-                    columnNumber: 10
+                    lineNumber: 185,
+                    columnNumber: 12
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/client/src/app/components/board.tsx",
-                lineNumber: 173,
-                columnNumber: 5
+                lineNumber: 185,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/client/src/app/components/board.tsx",
-        lineNumber: 114,
-        columnNumber: 9
+        lineNumber: 126,
+        columnNumber: 5
     }, this);
 }
 _s(Board, "g96QZIj7Fa1lcASxfOpluZ7s+J0=", false, function() {
@@ -1214,7 +1245,7 @@ function Square(param) {
         onClick: onSquareClick
     }, void 0, false, {
         fileName: "[project]/client/src/app/components/board.tsx",
-        lineNumber: 179,
+        lineNumber: 191,
         columnNumber: 10
     }, this);
 }

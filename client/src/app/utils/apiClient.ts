@@ -24,7 +24,7 @@ class ApiClient {
         ...options,
         headers: {
           ...this.defaultHeaders,
-          ...options.headers,
+          ...options.headers
         },
         signal: controller.signal,
       });
@@ -50,39 +50,44 @@ class ApiClient {
     }
   }
 
-  async get<T>(endpoint: string, params?: Record<string, string>): Promise<ApiResponse<T>> {
+  async get<T>(endpoint: string, socketId: string, params?: Record<string, string>): Promise<ApiResponse<T>> {
     const queryString = params
       ? '?' + new URLSearchParams(params).toString()
       : '';
     return this.request<T>(`${endpoint}${queryString}`, {
       method: 'GET',
+      headers: { 'x-socket-id': socketId },
     });
   }
 
-  async post<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, socketId: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
+      headers: { 'x-socket-id': socketId },
     });
   }
 
-  async put<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, socketId: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: JSON.stringify(data),
+      headers: { 'x-socket-id': socketId },
     });
   }
 
-  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
+  async delete<T>(endpoint: string, socketId: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'DELETE',
+      headers: { 'x-socket-id': socketId },
     });
   }
 
-  async patch<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, socketId: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
       body: JSON.stringify(data),
+      headers: { 'x-socket-id': socketId },
     });
   }
 }

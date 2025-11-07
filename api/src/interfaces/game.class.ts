@@ -32,6 +32,7 @@ export interface GameDetailsDTO {
 export interface GameIndexDTO {
   id: number;
   name: string;
+  players: number;
 }
 
 export interface GameStateDTO {

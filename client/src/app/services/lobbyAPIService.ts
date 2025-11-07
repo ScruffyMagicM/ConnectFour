@@ -5,25 +5,22 @@ import { GameIndexDTO, GameStateDTO } from '../types/game.types';
 export class LobbyAPIService {
   private readonly basePath = '/lobby';
 
-    async getGames(): Promise<ApiResponse<GameIndexDTO[]>> {
-        return apiClient.get<GameIndexDTO[]>(`${this.basePath}`);
+    async getGames(socketId: string): Promise<ApiResponse<GameIndexDTO[]>> {
+        return apiClient.get<GameIndexDTO[]>(`${this.basePath}`, socketId);
     }
 
-    async createGame(gameName: string): Promise<ApiResponse<GameIndexDTO>> {
-        return apiClient.post<GameIndexDTO>(`${this.basePath}/create`, {
+    async getGame(gameId: number): Promise<ApiResponse<GameStateDTO>> {
+        return apiClient.get<GameStateDTO>(`${this.basePath}/getGame/${gameId}`, '');
+    }
+
+    async createGame(gameName: string, socketId: string): Promise<ApiResponse<GameIndexDTO>> {
+        return apiClient.post<GameIndexDTO>(`${this.basePath}/create`, socketId, {
             gameName,
         });
     }
 
-    async joinGame(playerId: number, gameId: number): Promise<ApiResponse<GameStateDTO>> {
-        return apiClient.post<GameStateDTO>(`${this.basePath}/join`, {
-            playerId,
-            gameId,
-        });
-    }
-
-    async quitGame(playerId: number, gameId: number): Promise<ApiResponse<void>> {
-        return apiClient.post<void>(`${this.basePath}/quit`, {
+    async quitGame(playerId: number, gameId: number, socketId: string): Promise<ApiResponse<void>> {
+        return apiClient.post<void>(`${this.basePath}/quit`, socketId, {
             playerId,
             gameId,
         });

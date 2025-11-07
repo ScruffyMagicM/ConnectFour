@@ -32,7 +32,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('gameCreated')
   handleGameCreated(@MessageBody() id: number, name: string, @ConnectedSocket() client: Socket): GameIndexDTO {
     console.log(`Game created: ${id} - ${name}`);
-    return { id, name };
+    return { id, name, players: 0 };
   }
 
   broadcastGameCreated(gameId: number, update: GameIndexDTO) {

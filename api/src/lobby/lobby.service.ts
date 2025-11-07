@@ -10,7 +10,7 @@ export class LobbyService {
         private readonly gameRepository: Repository<Game>,
     ) {}
 
-    async getGames(): Promise<GameIndexDTO[]> {
+    async GetGames(): Promise<GameIndexDTO[]> {
         const games = await this.gameRepository.find();
         return games.map(game => ({
             id: game.id,
@@ -19,7 +19,7 @@ export class LobbyService {
         }));
     }
 
-    async createGame(gameName: string, socketId: string): Promise<GameIndexDTO> {
+    async CreateGame(gameName: string, socketId: string): Promise<GameIndexDTO> {
         const newGame = this.gameRepository.create({
             name: gameName,
             board: Array(42).fill(0),
@@ -28,19 +28,18 @@ export class LobbyService {
             completed: false,
         });
         await this.gameRepository.save(newGame);
-        return { id: newGame.id, name: newGame.name};
+        return { id: newGame.id, name: newGame.name, players: newGame.players.length };
     }
 
-    async joinGame(playerId: number, gameId: number, socketId: string): Promise<GameDetailsDTO> {
+    async GetGame(gameId: number): Promise<GameDetailsDTO> {
         const game = await this.gameRepository.findOneBy({ id: gameId });
         if (!game) 
             throw new NotFoundException('Game not found');
 
-        game.players.push(playerId);
         return await game;
     }
 
-    async quitGame(playerId: number, gameId: number, socketId: string): Promise<void> {
+    async QuitGame(playerId: number, gameId: number, socketId: string): Promise<void> {
         const game = await this.gameRepository.findOneBy({ id: gameId });
         if (!game) 
             throw new NotFoundException('Game not found');

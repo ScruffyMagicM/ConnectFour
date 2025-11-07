@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { LobbyService } from './lobby.service';
 import type { Game, GameDetailsDTO, GameIndexDTO } from '../interfaces/game.class';
 import { ApiResponse } from 'src/interfaces/api.interface';
@@ -10,23 +10,23 @@ export class LobbyController {
   constructor(private readonly lobbyService: LobbyService) {}
 
   @Get()
-  async getGames(): Promise<ApiResponse<GameIndexDTO[]>> {
-    return ApiUtils.createApiResponse(this.lobbyService.getGames(), 'Games retrieved successfully');
+  async GetGames(): Promise<ApiResponse<GameIndexDTO[]>> {
+    return ApiUtils.createApiResponse(this.lobbyService.GetGames(), 'Games retrieved successfully');
+  }
+
+  @Get('getGame/:gameId')
+  async GetGame(@Param('gameId') gameId: number): Promise<ApiResponse<GameDetailsDTO>> {
+    return ApiUtils.createApiResponse(this.lobbyService.GetGame(gameId), 'Retrieved game successfully');
   }
 
   @Post('create')
-  async createGame(@Body('gameName') gameName: string, @SocketId() socketId?: string): Promise<ApiResponse<GameIndexDTO>> {
-    return ApiUtils.createApiResponse(this.lobbyService.createGame(gameName, socketId!), 'Game created successfully');
-  }
-
-  @Post('join')
-  async joinGame(@Body('playerId') playerId: number, @Body('gameId') gameId: number, @SocketId() socketId?: string): Promise<ApiResponse<GameDetailsDTO>> {
-    return ApiUtils.createApiResponse(this.lobbyService.joinGame(playerId, gameId, socketId!), 'Game joined successfully');
+  async CreateGame(@Body('gameName') gameName: string, @SocketId() socketId?: string): Promise<ApiResponse<GameIndexDTO>> {
+    return ApiUtils.createApiResponse(this.lobbyService.CreateGame(gameName, socketId!), 'Game created successfully');
   }
 
   @Post('quit')
-  async quitGame(@Body('playerId') playerId: number, @Body('gameId') gameId: number, @SocketId() socketId?: string): Promise<ApiResponse<void>> {
-    return ApiUtils.createApiResponse(this.lobbyService.quitGame(playerId, gameId, socketId!), 'Game quit successfully');
+  async QuitGame(@Body('playerId') playerId: number, @Body('gameId') gameId: number, @SocketId() socketId?: string): Promise<ApiResponse<void>> {
+    return ApiUtils.createApiResponse(this.lobbyService.QuitGame(playerId, gameId, socketId!), 'Game quit successfully');
   }
 
 }

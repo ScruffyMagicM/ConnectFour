@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Game, GameStateDTO } from 'src/interfaces/game.class';
+import { Game, GameDetailsDTO, GameStateDTO } from 'src/interfaces/game.class';
 import { Repository } from 'typeorm/repository/Repository.js';
 import { BroadcastService } from 'src/websocket/broadcast.service';
 
@@ -14,18 +14,24 @@ export class GameService {
     private readonly broadcastService: BroadcastService,
   ) {}
 
-  async JoinGame(id: number, socketId: string): Promise<GameStateDTO> {
+  async GetGame(id: number, socketId: string): Promise<GameStateDTO> {
     const game = await this.gameRepository.findOneBy({ id: id });
     
     if (!game) throw new Error('Game not found');
-    if(game.players.length > 1) throw new Error('Game is full');
+    return await this.GetGameState(game);
+  }
 
-    // We assume player joining takes first available player slot, i.e. first player to join will be player 1;
-    game.players.push(game.players.length + 1);
+  async JoinGame(playerId: number, gameId: number, socketId: string): Promise<GameDetailsDTO> {
+      const game = await this.gameRepository.findOneBy({ id: gameId });
+        if (!game) 
+          throw new NotFoundException('Game not found');
+  
+    game.players.push(playerId);
     this.gameRepository.update(game.id, {players: game.players});
 
-    this.broadcastService.emitToOthers('game', 'playerJoinedGame', game.players.length, socketId);
-    return await this.GetGameState(game);
+    this.broadcastService.joinRoom(socketId, `game-${gameId}`);
+
+    return await game;
   }
 
   async GetGameState(game: Game): Promise<GameStateDTO> {
@@ -44,7 +50,9 @@ export class GameService {
     game.players.splice(game.players.indexOf(playerId), 1);
 
     await this.gameRepository.update(id, { players: game.players });
-    this.broadcastService.emitToOthers('game', 'playerQuitGame', id, socketId);
+    this.broadcastService.emitToOthers('game', 'playerQuitGame', { id : id }, socketId);
+
+    this.broadcastService.joinRoom(socketId, `game-${id}`);
   }
 
   async UpdateGameState(id: number, move: number, playerId: number, socketId: string): Promise<number> {
@@ -53,8 +61,7 @@ export class GameService {
     if (!game) throw new Error('Game not found');    
     if (game.turn !== playerId) throw new Error('Not your turn');
     if (move < 0 || move >= 42) throw new Error('Invalid move');
-    if (game.board[move] !== 0) throw new Error('Cell already occupied');    
-    if (move >= 7 && game.board[move - 7] === 0) throw new Error('Invalid move: piece must be placed on top of another piece or at the bottom of the column');
+    if (game.board[move] !== 0) throw new Error('Cell already occupied');
     if (game.completed) throw new Error('Game already completed');
 
     // Update the board with the player's move
@@ -72,12 +79,12 @@ export class GameService {
     if (result) {
       // Handle victory (e.g., notify players, update game status)
 
-      this.broadcastService.emitToOthersRoom('game', `game-${id}`, 'gameStateUpdate', { board: game.board, lastMove: move, turn: game.turn }, socketId);
+      this.broadcastService.emitToOthersRoom('game', `game-${id}`, 'gameStateUpdate', { game: {board: game.board, lastMove: move, turn: game.turn }}, socketId);
       return playerId == 1 ? 3 : 4; // Return the winning player
     }
 
     // Notify players of the updated game state
-    this.broadcastService.emitToOthersRoom('game', `game-${id}`, 'gameStateUpdate', { board: game.board, lastMove: move, turn: game.turn }, socketId);
+    this.broadcastService.emitToOthersRoom('game', `game-${id}`, 'gameStateUpdate', { game: {board: game.board, lastMove: move, turn: game.turn }}, socketId);
 
     return game.turn;
   }
