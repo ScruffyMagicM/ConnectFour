@@ -518,10 +518,6 @@
 @layer components;
 
 @layer utilities {
-  .row-start-2 {
-    grid-row-start: 2;
-  }
-
   .row-start-3 {
     grid-row-start: 3;
   }
@@ -546,6 +542,10 @@
     display: grid;
   }
 
+  .hidden {
+    display: none;
+  }
+
   .min-h-screen {
     min-height: 100vh;
   }
@@ -560,10 +560,6 @@
 
   .grid-cols-\[1fr_auto_auto\] {
     grid-template-columns: 1fr auto auto;
-  }
-
-  .grid-rows-\[20px_1fr_20px\] {
-    grid-template-rows: 20px 1fr 20px;
   }
 
   .flex-col {
@@ -590,16 +586,8 @@
     gap: calc(var(--spacing) * 4);
   }
 
-  .gap-16 {
-    gap: calc(var(--spacing) * 16);
-  }
-
   .gap-\[24px\] {
     gap: 24px;
-  }
-
-  .gap-\[32px\] {
-    gap: 32px;
   }
 
   .rounded {
@@ -641,10 +629,6 @@
 
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
-  }
-
-  .pb-20 {
-    padding-bottom: calc(var(--spacing) * 20);
   }
 
   .text-center {
@@ -702,12 +686,6 @@
       align-items: flex-start;
     }
   }
-
-  @media (min-width: 40rem) {
-    .sm\:p-20 {
-      padding: calc(var(--spacing) * 20);
-    }
-  }
 }
 
 :root {
@@ -739,6 +717,11 @@ body {
 
 .board {
   background-color: #00f;
+}
+
+.board-row {
+  justify-content: center;
+  display: flex;
 }
 
 .disc.disc-0 {

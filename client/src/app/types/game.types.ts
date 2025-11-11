@@ -10,6 +10,7 @@ export interface GameIndexDTO {
   id: number;
   name: string;
   players: number;
+  completed: boolean;
 }
 
 export interface GameStateDTO {

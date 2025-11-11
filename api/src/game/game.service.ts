@@ -29,9 +29,10 @@ export class GameService {
     game.players.push(playerId);
     this.gameRepository.update(game.id, {players: game.players});
 
+    this.broadcastService.emitToOthers('lobby', 'playerJoined', { gameId: game.id }, socketId);
     this.broadcastService.joinRoom(socketId, `game-${gameId}`);
 
-    return await game;
+    return game;
   }
 
   async GetGameState(game: Game): Promise<GameStateDTO> {
@@ -50,6 +51,7 @@ export class GameService {
     game.players.splice(game.players.indexOf(playerId), 1);
 
     await this.gameRepository.update(id, { players: game.players });
+    this.broadcastService.emitToOthers('lobby', 'playerQuit', { gameId : id }, socketId);
     this.broadcastService.emitToOthers('game', 'playerQuitGame', { id : id }, socketId);
 
     this.broadcastService.joinRoom(socketId, `game-${id}`);
@@ -78,9 +80,10 @@ export class GameService {
 
     if (result) {
       // Handle victory (e.g., notify players, update game status)
-
+      this.gameRepository.update(id, { completed: true} );
+      game.turn = playerId == 1 ? 3 : 4;
       this.broadcastService.emitToOthersRoom('game', `game-${id}`, 'gameStateUpdate', { game: {board: game.board, lastMove: move, turn: game.turn }}, socketId);
-      return playerId == 1 ? 3 : 4; // Return the winning player
+      return game.turn; // Return the winning player
     }
 
     // Notify players of the updated game state

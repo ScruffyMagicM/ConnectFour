@@ -34,8 +34,15 @@ body {
   margin: 5px;
 }
 
-.board{
+.board
+{
   background-color: blue;
+}
+
+.board-row
+{	
+  display: flex;
+  justify-content: center;
 }
 
 .disc.disc-0

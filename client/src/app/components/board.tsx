@@ -4,8 +4,6 @@ import React, { useState, useEffect } from "react";
 import { gameApiService } from "../services/gameAPIService";
 import Confetti from "canvas-confetti";
 import { useGameSocket } from "../hooks/useGameSocket";
-import { Socket } from "socket.io-client";
-import { useAppState } from "../hooks/useAppState";
 import { useSocketConnection } from "../hooks/useSocketConnection";
 
 export default function Board({ gameId, playerId, setMessage, leaveGame }: { gameId: number | null; playerId: number | null; setMessage: (message: string) => void; leaveGame: (gameId: number | null, playerId: number | null) => void; }) {
@@ -28,6 +26,8 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
         endGame(data.game.turn);
       }
       setTurn(data.game.turn);
+      if(data.game.turn === playerId)
+          setMessage('It\'s your turn!');
     }
   });
 
@@ -38,6 +38,8 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
   const [confettiVisible, setConfettiVisible] = useState(false);
 
   useEffect(() => {
+    window.addEventListener('beforeunload', quitGame);
+
     if (!socket) return;
 
     socket.connect();
@@ -80,7 +82,7 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
   }
 
   function quitGame() {
-    gameApiService.quitGame(currGameId, currPlayerId, socket?.id!).then(() => {
+    gameApiService.quitGame(currGameId, currPlayerId, socket.id!).then(() => {
       setMessage(`You quit the game.`);
       leaveGame(currGameId, currPlayerId);
     });
@@ -96,7 +98,7 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
     rowTop[column] -= 1;
 
     // Submit new move to server here
-    gameApiService.updateGameState(currGameId, id, turn, socket?.id!).then(response => {
+    gameApiService.updateGameState(currGameId, id, turn, socket.id!).then(response => {
       const newSquares = board.slice();
       newSquares[id] = turn;
       setBoard(newSquares);
@@ -108,23 +110,32 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
     });
 
     turn === 1 ? setTurn(2) : setTurn(1);
+
+    setMessage('It is your opponent\'s turn');
   }
 
   function endGame(player: number) {
-    setConfettiVisible(true);
     setTimeout(() => {
-      alert(`Player ${player} wins!`);
+      player = (player === 3 || player === 1) ? 1 : 2;
+      if(currPlayerId !== player)
+        alert(`You lose!`);
+      else
+      {
+        alert(`You win!`);
+        setConfettiVisible(true);
+      }
       setConfettiVisible(false);
+      
+      // Show exit option
+      alert("Game over! Press OK to exit to lobby.");
+      quitGame();
     }, 300);
-
-    // Show exit option
-    prompt("Game over! Press OK to exit to lobby.");
-    quitGame();
   }
 
   return (
     <div>
       <div className={`current-turn-${turn}`}>Current Turn: Player {turn}</div>
+      <div className={`current-turn-${currPlayerId}`}>You are player {currPlayerId}</div>
       <div className="board">
         <div className="board-row">
           <Square value={board[0]} onSquareClick={() => handleSquareClick(0)} />
@@ -141,6 +152,7 @@ export default function Board({ gameId, playerId, setMessage, leaveGame }: { gam
           <Square value={board[9]} onSquareClick={() => handleSquareClick(2)} />
           <Square value={board[10]} onSquareClick={() => handleSquareClick(3)} />
           <Square value={board[11]} onSquareClick={() => handleSquareClick(4)} />
+
           <Square value={board[12]} onSquareClick={() => handleSquareClick(5)} />
           <Square value={board[13]} onSquareClick={() => handleSquareClick(6)} />
         </div>
