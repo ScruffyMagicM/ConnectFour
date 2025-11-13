@@ -1,0 +1,34 @@
+plaintext# .dockerignore
+node_modules
+npm-debug.log
+dist
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.vscode
+.idea
+*.md
+README.md
+.eslintrc.js
+.prettierrc
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Test files
+*.spec.ts
+*.test.ts
+test/
+coverage/
+
+# Build artifacts
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
