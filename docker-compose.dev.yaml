@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: connectfour-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Stuyvesant1
+      POSTGRES_DB: ConnectFour
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ConnectFour"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-network
+
   client:
     build:
       context: ./client
@@ -16,7 +36,7 @@ services:
       - NODE_ENV=development
     command: npm run dev
     
-  backend:
+  api:
     build:
       context: ./api
       dockerfile: Dockerfile.dev
@@ -29,7 +49,11 @@ services:
     environment:
       - PORT=3001
       - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:Stuyvesant1@db:5432/ConnectFour?sslmode=disable
     command: npm run start:dev
+
+volumes:
+  postgres_data:
 
 # Uncomment if you need additional services like database
 # services:

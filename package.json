@@ -5,6 +5,12 @@
   "description": "Introductory project to implement Connect Four",
   "main": "index.js",
   "scripts": {
+    "migration:generate": "cd ./api && npm run migration:generate",
+    "migration:create": "cd ./api && npm run migration:create",
+    "migration:run": "cd ./api && npm run migration:run",
+    "migration:revert": "cd ./api && npm run migration:revert",
+    "migration:show": "cd ./api && npm run migration:show",
+
     "build:all": "npm-run-all --parallel build:client build:api",
     "build:client": "cd ./client && npm run build",
     "build:api": "cd ./api && npm run build",

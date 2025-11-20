@@ -8,6 +8,19 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    
+    "typeorm": "typeorm-ts-node-commonjs",
+    
+    "migration:generate": "npm run typeorm -- migration:generate -d dist/config/data-source.js",
+    "migration:create": "npm run typeorm -- migration:create",
+    "migration:run": "npm run typeorm -- migration:run -d dist/config/data-source.js",
+    "migration:revert": "npm run typeorm -- migration:revert -d dist/config/data-source.js",
+    "migration:show": "npm run typeorm -- migration:show -d dist/config/data-source.js",
+
+    "schema:sync": "npm run typeorm -- schema:sync -d dist/config/data-source.js",
+    "schema:drop": "npm run typeorm -- schema:drop -d dist/config/data-source.js",
+    "schema:log": "npm run typeorm -- schema:log -d dist/config/data-source.js",
+
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -29,6 +42,7 @@
     "@nestjs/config": "^4.0.2",
     "dotenv": "^17.2.3",
     "pg": "^8.16.3",
+    "typeorm": "^0.3.27",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "socket.io": "^4.0.0"
@@ -74,5 +88,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "engines": {
+	"node": "^22.19.0"
   }
 }

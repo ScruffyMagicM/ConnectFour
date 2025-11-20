@@ -6,6 +6,7 @@ import { LobbyModule } from './lobby/lobby.module';
 import { WebSocketModule } from './websocket/broadcast.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import configuration from './config/configuration';
     LobbyModule,
     WebSocketModule
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}

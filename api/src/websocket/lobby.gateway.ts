@@ -13,7 +13,7 @@ import type { PlayerJoinedDTO } from '../interfaces/player.interface';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGINS,
     credentials: true,
   },
 })

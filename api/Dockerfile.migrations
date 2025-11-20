@@ -1,0 +1,38 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build application
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install only production dependencies + CLI tools
+RUN npm ci --only=production
+
+# Copy built application
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src ./src
+
+# Copy migrations
+COPY --from=builder /app/src/migrations ./src/migrations
+COPY --from=builder /app/src/config ./src/config
+
+# Set NODE_ENV
+ENV NODE_ENV=production
+
+# Run migrations command
+CMD ["npm", "run", "migration:run"]

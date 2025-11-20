@@ -1,0 +1,38 @@
+{
+  "family": "connectfour-migrations",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::814436217782:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::814436217782:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "migrations",
+      "image": "814436217782.dkr.ecr.us-east-2.amazonaws.com/connectfour-migrations:latest",
+      "essential": true,
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-2:814436217782:secret:prod/database-url-pDlM53"
+        }
+      ],
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/migrations",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "migration",
+          "awslogs-create-group": "true"
+        }
+      },
+      "stopTimeout": 120
+    }
+  ]
+}

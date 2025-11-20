@@ -12,7 +12,7 @@ import type { GameStateDTO } from '../interfaces/game.class';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGINS,
     credentials: true,
   },
 })

@@ -3,7 +3,7 @@ import { ApiResponse } from '../types/api.types';
 import { GameIndexDTO, GameStateDTO } from '../types/game.types';
 
 export class LobbyAPIService {
-  private readonly basePath = '/lobby';
+  private readonly basePath = '/api/lobby';
 
     async getGames(socketId: string): Promise<ApiResponse<GameIndexDTO[]>> {
         return apiClient.get<GameIndexDTO[]>(`${this.basePath}`, socketId);

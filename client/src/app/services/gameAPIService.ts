@@ -3,7 +3,7 @@ import { ApiResponse } from '../types/api.types';
 import { GameStateDTO } from '../types/game.types';
 
 export class GameService {
-  private readonly basePath = '/game';
+  private readonly basePath = '/api/game';
 
     async getGame(gameId: number, socketId: string): Promise<ApiResponse<GameStateDTO>> {
         return apiClient.get<GameStateDTO>(`${this.basePath}/${gameId}`, socketId);
