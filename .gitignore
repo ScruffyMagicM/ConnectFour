@@ -41,3 +41,8 @@ next-env.d.ts
 # environment files
 *.local
 *.production
+
+/api/package-lock.json
+/client/package-lock.json
+
+/client/.vs
